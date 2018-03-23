@@ -1,0 +1,103 @@
+<html>
+<head>
+
+    <!--bootstrap-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="./app.css">
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+    <!--firebase-->
+    <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase-database.js"></script>
+
+    <!-- AngularFire -->
+    <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+
+    <script>
+        var config = {
+            apiKey: "AIzaSyCMGAwE2t_6EHLGiz6pcp6vyvZSgfvPweE",
+            authDomain: "inf551-project-10723.firebaseapp.com",
+            databaseURL: "https://inf551-project-10723.firebaseio.com",
+            projectId: "inf551-project-10723",
+            storageBucket: "inf551-project-10723.appspot.com",
+            messagingSenderId: "373729871136"
+        };
+        firebase.initializeApp(config);
+    </script>
+    <script src="./temp.js"></script>
+</head>
+
+<body ng-app="app">
+<div class="container-fluid" ng-controller="AppController">
+    <div class="row">
+
+        <div class="col-sm-2 filters">
+            <select class="custom-select" ng-model="alignValue" ng-change="callWithAlign()">
+                <option value="" selected hidden>Choose ALIGN</option>
+                <option value="Good Characters">Good Characters</option>
+                <option value="Bad Characters">Bad Characters</option>
+            </select>
+
+            <select class="custom-select" ng-model="aliveValue" ng-change="callWithAlive()">
+                <option value="" selected hidden>ALIVE</option>
+                <option value="Deceased Characters">Deceased  Characters</option>
+                <option value="Living Characters">Living Characters</option>
+            </select>
+
+            <input type="text" class="form-control" ng-model="appearances" ng-change="callWithAppearances()" placeholder="Appearances">
+
+            <select class="custom-select" ng-model="hair" ng-change="callWithHair()">
+                <option value="" selected hidden>HAIR</option>
+                <option value="Purple Hair">Purple Hair</option>
+                <option value="Blond Hair">Blond Hair</option>
+            </select>
+
+            <select class="custom-select" ng-model="id" ng-change="callWithID()">
+                <option value="" selected hidden>ID</option>
+                <option value="Public Identity">Public Identity</option>
+                <option value="Secret Identity">Secret Identity</option>
+            </select>
+
+            <select class="custom-select" ng-model="sex" ng-change="callWithSex()">
+                <option value="" selected hidden>SEX</option>
+                <option value="Male Characters">Male Characters</option>
+                <option value="Female Characters">Female Characters</option>
+            </select>
+        </div>
+        <div class="col-sm-10">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3">Name:</span>
+                </div>
+                <input type="text" class="form-control" ng-model="searchInput" ng-change="callFireBase()">
+            </div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th ng-repeat="(key,value) in comics[0]">{{key}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="row in comics">
+                    <td ng-repeat="(key,value) in row">
+                        {{value}}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
