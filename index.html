@@ -20,10 +20,12 @@
     <!--firebase-->
     <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase-auth.js"></script>
 
     <!-- AngularFire -->
     <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
 
+    <!--Facebook-->
     <script>
         var config = {
             apiKey: "AIzaSyCMGAwE2t_6EHLGiz6pcp6vyvZSgfvPweE",
@@ -38,11 +40,25 @@
     <script src="./temp.js"></script>
 </head>
 
-<body ng-app="app">
-<div class="container-fluid" ng-controller="AppController">
+<body ng-app="app" ng-controller="AppController">
+<nav class="navbar navbar-dark bg-dark sticky-top">
+    <a class="navbar-brand" href="#">Comic Book</a>
+
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+            <a class="nav-link disabled" href="#">{{user.name}}</a>
+        </li>
+    </ul>
+
+
+</nav>
+<div class="container-fluid">
     <div class="row">
 
-        <div class="col-sm-2 filters">
+        <!-- Navbar content -->
+
+
+        <div class="col-sm-2 filters" style="height: 100%">
             <select class="custom-select" ng-model="alignValue" ng-change="callWithAlign()">
                 <option value="" selected hidden>Choose ALIGN</option>
                 <option value="Good Characters">Good Characters</option>
@@ -51,11 +67,12 @@
 
             <select class="custom-select" ng-model="aliveValue" ng-change="callWithAlive()">
                 <option value="" selected hidden>ALIVE</option>
-                <option value="Deceased Characters">Deceased  Characters</option>
+                <option value="Deceased Characters">Deceased Characters</option>
                 <option value="Living Characters">Living Characters</option>
             </select>
 
-            <input type="text" class="form-control" ng-model="appearances" ng-change="callWithAppearances()" placeholder="Appearances">
+            <input type="text" class="form-control" ng-model="appearances" ng-change="callWithAppearances()"
+                   placeholder="Appearances">
 
             <select class="custom-select" ng-model="hair" ng-change="callWithHair()">
                 <option value="" selected hidden>HAIR</option>
@@ -75,24 +92,35 @@
                 <option value="Female Characters">Female Characters</option>
             </select>
         </div>
-        <div class="col-sm-10">
+        <div class="col-sm-10" style="padding-top: 20px">
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon3">Name:</span>
+                    <div class="dropdown-menu" ng-if="searchHistory.length > 0" style="display: block">
+                        <a href="javascript:void(0)" ng-click="clickHistory( value['value'])"
+                           ng-repeat="value in searchHistory | filter: {'value': searchInput}" class="dropdown-item">{{value["value"]}}
+                            <span style="font-size: 10px">{{value["time"]}}</span></a>
+                    </div>
                 </div>
-                <input type="text" class="form-control" ng-model="searchInput" ng-change="callFireBase()">
+                <input type="text" class="form-control" ng-blue="removeHistory()" ng-model="searchInput"
+                       ng-focus="getSearchHistory()"
+                       ng-model-options='{ debounce: 500 }' ng-change="callFireBase()">
             </div>
-            <table class="table table-striped">
-                <thead>
+            <table class="table table-striped table-hover">
+                <thead class="thead-dark">
                 <tr>
                     <th ng-repeat="(key,value) in comics[0]">{{key}}</th>
+                    <th>no.of time clicked</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="row in comics">
                     <td ng-repeat="(key,value) in row">
-                        {{value}}
+                        <p ng-if="key != 'urlslug'">{{value}}</p>
+                        <a ng-if="key === 'urlslug'" target="_blank" ng-click="saveClicks(row['page_id'])"
+                           ng-href="http://dc.wikia.com{{value|escape}}">click </a>
                     </td>
+                    <td>{{clickList[row['page_id']]}}</td>
                 </tr>
                 </tbody>
             </table>
@@ -101,3 +129,18 @@
 </div>
 </body>
 </html>
+
+<div class="input-group">
+    <input type="text" class="form-control" aria-label="...">
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            Action <span class="caret"></span></button>
+        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+        </ul>
+    </div><!-- /btn-group -->
+</div><!-- /input-group -->
