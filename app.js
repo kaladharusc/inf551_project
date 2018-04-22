@@ -4,9 +4,9 @@ angular.module('app', ["firebase", "ngRoute"])
             .when("/comics", {
                 templateUrl: "dc.html",
                 controller: "AppController",
-                // auth: function(user) {
-                //     return user !== undefined
-                // }
+                auth: function(user) {
+                    return user !== undefined
+                }
 
             })
             .when("/login", {
