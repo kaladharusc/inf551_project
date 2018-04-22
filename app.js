@@ -129,7 +129,7 @@ angular.module('app', ["firebase", "ngRoute"])
                 return;
             }
 
-            var userHistRef = firebase.database().ref("users/" + $scope.user.name + "/history");
+            var userHistRef = firebase.database().ref("users/" + $rootScope.user.name + "/history");
             var newHistObj = userHistRef.push();
             newHistObj.set({
                 "time": Date(),
@@ -173,7 +173,7 @@ angular.module('app', ["firebase", "ngRoute"])
 
 
         $scope.getSearchHistory = function () {
-            var userHistRef = firebase.database().ref("users/" + $scope.user.name + "/history/");
+            var userHistRef = firebase.database().ref("users/" + $rootScope.user.name + "/history/");
             $scope.searchHistory = $firebaseArray(userHistRef);
 
             console.log($scope.searchHistory);
