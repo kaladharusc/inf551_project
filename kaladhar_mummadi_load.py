@@ -5,14 +5,24 @@ import re
 import sys
 firebase_url =  "https://inf551-project-10723.firebaseio.com"
 def readFromFile():
-    f = open('./data/marvel.json')
-    data = f.read().decode("utf-8", "ignore")
+    f = open('./data/dc.json')
+    data = f.read()
     js = json.loads(data)
     return js
 def a_1_save():
     rows = readFromFile()
-    response = requests.put(firebase_url + "/marvel.json", json=rows)
+
+    for row in rows:
+        for key in row:
+            if key in ["YEAR", "APPEARANCES", "page_id"]:
+                print(key, row[key])
+                if row[key] != "":
+                    row[key] = int(row[key].strip())
+        row["lower_case_name"] = row["name"].lower()
+
+    response = requests.put(firebase_url + "/dc.json", json=rows)
     print(response.status_code)
+
     print("total data saved to firebase")
 
 def a_2_save():
