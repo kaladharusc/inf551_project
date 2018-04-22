@@ -181,7 +181,7 @@ angular.module('app', ["firebase", "ngRoute"])
 
         $scope.callFireBase = function (search) {
             var searchKey = search || $scope.searchInput;
-            var query = ref.orderByChild("lower_case_name").startAt(searchKey).endAt(searchKey + "\uf8ff").limitToFirst(10);
+            var query = ref.orderByChild("lower_case_name").startAt(searchKey.toLowerCase()).endAt(searchKey.toLowerCase() + "\uf8ff").limitToFirst(10);
             $scope.comics = $firebaseArray(query);
             updateHistory($scope.searchInput);
         };
