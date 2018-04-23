@@ -5,7 +5,7 @@ import re
 import sys
 firebase_url =  "https://inf551-project-10723.firebaseio.com"
 def readFromFile():
-    f = open('./data/dc.json')
+    f = open('./data/marvel.json')
     data = f.read()
     js = json.loads(data)
     return js
@@ -14,13 +14,16 @@ def a_1_save():
 
     for row in rows:
         for key in row:
-            if key in ["YEAR", "APPEARANCES", "page_id"]:
+            if key in ["Year", "APPEARANCES", "page_id"]:
                 print(key, row[key])
                 if row[key] != "":
                     row[key] = int(row[key].strip())
+        row["YEAR"] = row["Year"]
+        del row["Year"]
         row["lower_case_name"] = row["name"].lower()
 
-    response = requests.put(firebase_url + "/dc.json", json=rows)
+
+    response = requests.put(firebase_url + "/marvel.json", json=rows)
     print(response.status_code)
 
     print("total data saved to firebase")

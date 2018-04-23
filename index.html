@@ -52,10 +52,19 @@
 </head>
 
 <body ng-app="app" ng-controller="RootController">
-<nav class="navbar navbar-dark bg-dark sticky-top justify-content-between">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top justify-content-between">
     <a class="navbar-brand" href="#">Comic Book</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link" ng-class="{'active': studio == 'dc'}" href="/#!/comics/dc" ng-click="studio='dc'">DC <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" ng-class="{'active': studio == 'marvel'}" ng-click="studio='marvel'" href="/#!/comics/marvel">Marvel <span class="sr-only">(current)</span></a>
+        </div>
+    </div>
 
-    <form class="form-inline my-2 my-lg-0">
+    <form class="form-inline my-2 my-lg-0" ng-if="user.name != undefined">
         <span class="navbar-text mr-sm-2" >{{user.name}}</span>
         <button class="btn btn-outline-danger my-2 my-sm-0" ng-if="user" ng-click="logout()">Logout</button>
     </form>

@@ -77,7 +77,7 @@
                     <td ng-repeat="(key,value) in row" ng-if="key != 'lower_case_name'">
                         <p ng-if="key != 'urlslug'">{{value}}</p>
                         <a ng-if="key === 'urlslug'" target="_blank" ng-click="saveClicks(row['page_id'])"
-                           ng-href="http://dc.wikia.com{{value|escape}}">click </a>
+                           ng-href="{{wikiUrl}}{{value|escape}}">click </a>
                     </td>
                     <td>{{clickList[row['page_id']]}}</td>
                 </tr>

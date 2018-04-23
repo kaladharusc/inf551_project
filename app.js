@@ -1,11 +1,11 @@
 angular.module('app', ["firebase", "ngRoute"])
     .config(function ($routeProvider) {
         $routeProvider
-            .when("/comics", {
+            .when("/comics/:studio", {
                 templateUrl: "dc.html",
                 controller: "AppController",
                 auth: function(user) {
-                    return user !== undefined
+                    return user !== undefined && user.name !== undefined
                 }
 
             })
@@ -42,7 +42,9 @@ angular.module('app', ["firebase", "ngRoute"])
     .controller("RootController", function($scope, $rootScope, $location) {
         $scope.logout = function() {
             firebase.auth().signOut().then(function() {
-                $location.path("login");
+                $location.path("/login");
+                $rootScope.user = {};
+                $scope.$apply();
             })
                 .catch(function(error) {
                     console.log("error on signing out");
@@ -97,9 +99,16 @@ angular.module('app', ["firebase", "ngRoute"])
         };
 
     })
-    .controller("AppController", function ($scope, $firebaseArray, $firebaseObject, $rootScope) {
+    .controller("AppController", function ($scope, $firebaseArray, $firebaseObject, $rootScope, $routeParams) {
 
-        var ref = firebase.database().ref("dc/");
+        var ref = firebase.database().ref($routeParams.studio+"/");
+        $rootScope.studio = $routeParams.studio;
+        $scope.wikiUrl = ""
+        if ($routeParams.studio === "dc") {
+            $scope.wikiUrl = "http://dc.wikia.com"
+        } else {
+            $scope.wikiUrl = "http://marvel.wikia.com"
+        }
         var query = ref.orderByChild("name").limitToFirst(10);
         $scope.comics = $firebaseArray(query);
         $scope.sort = {
