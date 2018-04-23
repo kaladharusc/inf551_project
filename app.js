@@ -75,7 +75,7 @@ angular.module('app', ["firebase", "ngRoute"])
                 userObj[user.displayName] = {"history": [""]};
                 userObj.$save().then(function (ref) {
                     console.log("success");
-                    $location.path("comics");
+                    $location.path("comics/dc");
                     $rootScope.user.name = user.displayName;
 
                     // $scope.$apply();
