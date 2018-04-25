@@ -136,6 +136,19 @@ angular.module('app', ["firebase", "ngRoute"])
             return ids;
         };
 
+
+        $scope.clearAll = function() {
+            $scope.alignValue = undefined;
+            $scope.aliveValue = undefined;
+            $scope.appearances = undefined;
+            $scope.id = undefined;
+            $scope.sex = undefined;
+            $scope.hair = undefined;
+            $scope.searchInput = undefined;
+            $scope.year = undefined;
+            $scope.applyFilter()
+        };
+
         $scope.applyFilter = function(cate, cate_value) {
             if (!cate_value) {
                 delete  $scope.filters[cate];
@@ -302,23 +315,23 @@ angular.module('app', ["firebase", "ngRoute"])
         $scope.callWithAppearances = function () {
             var query = ref.orderByChild("APPEARANCES").startAt($scope.appearances).limitToFirst(20);
             $scope.comics = $firebaseArray(query);
-            $scope.alignValue = "";
-            $scope.aliveValue = "";
-            $scope.year = "";
-            $scope.id = "";
-            $scope.sex = "";
-            $scope.hair = "";
-            $scope.searchInput = "";
+            $scope.alignValue = undefined;
+            $scope.aliveValue = undefined;
+            $scope.year = undefined;
+            $scope.id = undefined;
+            $scope.sex = undefined;
+            $scope.hair = undefined;
+            $scope.searchInput = undefined;
         };
 
         $scope.callWithYear = function() {
-            $scope.alignValue = "";
-            $scope.aliveValue = "";
-            $scope.appearances = "";
-            $scope.id = "";
-            $scope.sex = "";
-            $scope.hair = "";
-            $scope.searchInput = "";
+            $scope.alignValue = undefined;
+            $scope.aliveValue = undefined;
+            $scope.appearances = undefined;
+            $scope.id = undefined;
+            $scope.sex = undefined;
+            $scope.hair = undefined;
+            $scope.searchInput = undefined;
 
             var query = ref;
             query = query.orderByChild("YEAR").startAt($scope.year);
