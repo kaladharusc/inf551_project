@@ -6,41 +6,38 @@
 
 
         <div class="col-sm-2 filters" style="height: 100%">
-            <select class="custom-select" ng-model="alignValue" ng-change="callWithAlign()">
-                <option value="" selected hidden>Choose ALIGN</option>
-                <option value="Good Characters">Good Characters</option>
-                <option value="Bad Characters">Bad Characters</option>
+            <select class="custom-select" ng-model="alignValue" ng-change="callWithAlign()"
+                ng-options="key as key for (key, value) in invert_index['align']">
+                <option value="" selected>Select ALIGN</option>
             </select>
 
-            <select class="custom-select" ng-model="aliveValue" ng-change="callWithAlive()">
-                <option value="" selected hidden>ALIVE</option>
-                <option value="Deceased Characters">Deceased Characters</option>
-                <option value="Living Characters">Living Characters</option>
+            <select class="custom-select" ng-model="aliveValue" ng-change="callWithAlive()"
+                    ng-options="key as key for (key, value) in invert_index['alive']">
+                <option value="" selected>Select ALIVE</option>
+
             </select>
+
+            <select class="custom-select" ng-model="hair" ng-change="callWithHair()"
+                    ng-options="key as key for (key, value) in invert_index['hair']">>
+                <option value="" selected>Select HAIR</option>
+            </select>
+
+            <select class="custom-select" ng-model="id" ng-change="callWithID()"
+                    ng-options="key as key for (key, value) in invert_index['id']">
+                <option value="" selected>Select ID</option>
+            </select>
+
+            <select class="custom-select" ng-model="sex" ng-change="callWithSex()"
+                    ng-options="key as key for (key, value) in invert_index['sex']">>
+                <option value="" selected>Select SEX</option>
+            </select>
+
+            <hr>
+            <input type="number" class="form-control" ng-model="year" ng-change="callWithYear()"
+                   placeholder="Year">
 
             <input type="number" class="form-control" ng-model="appearances" ng-change="callWithAppearances()"
                    placeholder="Appearances">
-
-            <select class="custom-select" ng-model="hair" ng-change="callWithHair()">
-                <option value="" selected hidden>HAIR</option>
-                <option value="Purple Hair">Purple Hair</option>
-                <option value="Blond Hair">Blond Hair</option>
-            </select>
-
-            <select class="custom-select" ng-model="id" ng-change="callWithID()">
-                <option value="" selected hidden>ID</option>
-                <option value="Public Identity">Public Identity</option>
-                <option value="Secret Identity">Secret Identity</option>
-            </select>
-
-            <select class="custom-select" ng-model="sex" ng-change="callWithSex()">
-                <option value="" selected hidden>SEX</option>
-                <option value="Male Characters">Male Characters</option>
-                <option value="Female Characters">Female Characters</option>
-            </select>
-
-            <input type="number" class="form-control" ng-model="year" ng-change="callWithYear()"
-                   placeholder="Year">
         </div>
         <div class="col-sm-10" style="padding-top: 20px">
             <div class="input-group mb-3">
@@ -73,11 +70,11 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="row in comics">
+                <tr ng-repeat="row in comics track by $index">
                     <td ng-repeat="(key,value) in row" ng-if="key != 'lower_case_name'">
                         <p ng-if="key != 'urlslug'">{{value}}</p>
                         <a ng-if="key === 'urlslug'" target="_blank" ng-click="saveClicks(row['page_id'])"
-                           ng-href="{{wikiUrl}}{{value|escape}}">click </a>
+                           ng-href="{{wikiUrl}}{{value|escape}}">click for more details..</a>
                     </td>
                     <td>{{clickList[row['page_id']]}}</td>
                 </tr>

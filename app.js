@@ -109,6 +109,9 @@ angular.module('app', ["firebase", "ngRoute"])
         } else {
             $scope.wikiUrl = "http://marvel.wikia.com"
         }
+
+
+        $scope.filters = {};
         var query = ref.orderByChild("name").limitToFirst(10);
         $scope.comics = $firebaseArray(query);
         $scope.sort = {
@@ -116,10 +119,98 @@ angular.module('app', ["firebase", "ngRoute"])
             reverse: false
         };
 
+        var getIdsOfName = function(search) {
+            var ids = [];
+            if (!search) {
+                return Object.keys($scope.name_index);
+            }
+            for (var key in $scope.name_index) {
+                if ($scope.name_index.hasOwnProperty(key)) {
+                    var value = $scope.name_index[key];
+                    // console.log(value);
+                    if (value !== undefined && typeof value == "string" && value.indexOf(search.toLowerCase()) !== -1) {
+                        ids.push(key);
+                    }
+                }
+            }
+            return ids;
+        };
+
+        $scope.applyFilter = function(cate, cate_value) {
+            if (!cate_value) {
+                delete  $scope.filters[cate];
+            } else {
+                $scope.filters[cate] = cate_value;
+            }
+            var ids = getIdsOfName($scope.searchInput);
+            $scope.appearances = "";
+            $scope.year = "";
+
+            for (var key in $scope.filters) {
+                var value = $scope.filters[key];
+
+                if ($scope.filters.hasOwnProperty(key)) {
+                    var temp_intesect_ids = [];
+                    var temp_ids =  $scope.invert_index[key][value];
+                    console.log(key, value, temp_ids.sort(function(a,b){return a-b}));
+
+                    for (var id in temp_ids) {
+                        var obj_id = temp_ids[id];
+                        if (typeof ids[0] === "string" && ids.indexOf(String(obj_id)) !== -1) {
+                            temp_intesect_ids.push(obj_id);
+                        } else if(ids.indexOf(obj_id) !== -1) {
+                            temp_intesect_ids.push(obj_id);
+                        }
+                    }
+
+                    ids = temp_intesect_ids;
+                }
+
+            }
+
+            $scope.comics = [];
+
+            var j = 0;
+            for (var i in ids) {
+                if (j >= 20 ){
+                    break
+                }
+                var id = ids[i];
+                var obj_ref = firebase.database().ref($routeParams.studio+"/");
+                var query_ref = obj_ref.orderByKey().equalTo(String(id));
+                var comic = $firebaseObject(query_ref);
+                comic.$loaded().then(function(comicObj) {
+                    $scope.comics.push(comicObj[Object.keys(comicObj)[0]]);
+
+                });
+
+                j +=1;
+            }
+
+            console.log($scope.filters);
+            console.log(ids.sort(function(a,b) {return a - b}));
+            return ids;
+        };
+
+
         $scope.user = {};
         $scope.searchHistory = [];
         var init = function () {
             clickDisplay();
+            var ref = firebase.database().ref($routeParams.studio+"_invert_index/");
+
+            var query_res = $firebaseObject(ref);
+            query_res.$loaded(function(res) {
+                $scope.invert_index = res;
+                console.log($scope.invert_index)
+            })
+
+            var index_ref =  firebase.database().ref($routeParams.studio+"_index"+"/");
+            var query = index_ref;
+            var query_res = $firebaseObject(query);
+            query_res.$loaded(function(res) {
+                $scope.name_index = res;
+            });
             // $rootScope.user.name = "Kaladhar Reddy M";
             // faceBookAuthenticate();
         };
@@ -190,30 +281,44 @@ angular.module('app', ["firebase", "ngRoute"])
 
         $scope.callFireBase = function (search) {
             var searchKey = search || $scope.searchInput;
-            var query = ref.orderByChild("lower_case_name").startAt(searchKey.toLowerCase()).endAt(searchKey.toLowerCase() + "\uf8ff").limitToFirst(10);
-            $scope.comics = $firebaseArray(query);
+            $scope.applyFilter();
+            // var query = ref.orderByChild("lower_case_name").startAt(searchKey.toLowerCase()).endAt(searchKey.toLowerCase() + "\uf8ff").limitToFirst(10);
+            // $scope.comics = $firebaseArray(query);
             updateHistory($scope.searchInput);
         };
 
         $scope.callWithAlign = function () {
-            if (!$scope.alignValue) {
-                return;
-            }
-            var query = ref.orderByChild("ALIGN").equalTo($scope.alignValue).limitToFirst(10);
-            $scope.comics = $firebaseArray(query);
+            $scope.applyFilter("align", $scope.alignValue);
+            // var query = ref.orderByChild("ALIGN").equalTo($scope.alignValue).limitToFirst(10);
+            // $scope.comics = $firebaseArray(query);
         };
 
         $scope.callWithAlive = function () {
-            var query = ref.orderByChild("ALIVE").equalTo($scope.aliveValue).limitToFirst(10);
-            $scope.comics = $firebaseArray(query);
+            $scope.applyFilter("alive", $scope.aliveValue);
+            // var query = ref.orderByChild("ALIVE").equalTo($scope.aliveValue).limitToFirst(10);
+            // $scope.comics = $firebaseArray(query);
         };
 
         $scope.callWithAppearances = function () {
             var query = ref.orderByChild("APPEARANCES").startAt($scope.appearances).limitToFirst(20);
             $scope.comics = $firebaseArray(query);
+            $scope.alignValue = "";
+            $scope.aliveValue = "";
+            $scope.year = "";
+            $scope.id = "";
+            $scope.sex = "";
+            $scope.hair = "";
+            $scope.searchInput = "";
         };
 
         $scope.callWithYear = function() {
+            $scope.alignValue = "";
+            $scope.aliveValue = "";
+            $scope.appearances = "";
+            $scope.id = "";
+            $scope.sex = "";
+            $scope.hair = "";
+            $scope.searchInput = "";
 
             var query = ref;
             query = query.orderByChild("YEAR").startAt($scope.year);
@@ -222,18 +327,21 @@ angular.module('app', ["firebase", "ngRoute"])
         }
 
         $scope.callWithHair = function () {
-            var query = ref.orderByChild("HAIR").equalTo($scope.hair).limitToFirst(20);
-            $scope.comics = $firebaseArray(query);
+            $scope.applyFilter("hair", $scope.hair);
+            // var query = ref.orderByChild("HAIR").equalTo($scope.hair).limitToFirst(20);
+            // $scope.comics = $firebaseArray(query);
         };
 
         $scope.callWithID = function () {
-            var query = ref.orderByChild("ID").equalTo($scope.id).limitToFirst(20);
-            $scope.comics = $firebaseArray(query);
+            $scope.applyFilter("id", $scope.id);
+            // var query = ref.orderByChild("ID").equalTo($scope.id).limitToFirst(20);
+            // $scope.comics = $firebaseArray(query);
         };
 
         $scope.callWithSex = function () {
-            var query = ref.orderByChild("SEX").equalTo($scope.sex).limitToFirst(20);
-            $scope.comics = $firebaseArray(query);
+            $scope.applyFilter("sex", $scope.sex);
+            // var query = ref.orderByChild("SEX").equalTo($scope.sex).limitToFirst(20);
+            // $scope.comics = $firebaseArray(query);
         };
 
 

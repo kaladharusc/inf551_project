@@ -11,19 +11,24 @@ def readFromFile():
     return js
 def a_1_save():
     rows = readFromFile()
-
+    temp_rows = {}
+    col = "ID"
     for row in rows:
         for key in row:
             if key in ["Year", "APPEARANCES", "page_id"]:
-                print(key, row[key])
                 if row[key] != "":
                     row[key] = int(row[key].strip())
         row["YEAR"] = row["Year"]
         del row["Year"]
         row["lower_case_name"] = row["name"].lower()
+        if row[col] in temp_rows:
+            temp_rows[row[col]].append(row["page_id"])
+        else:
+            temp_rows[row[col]] = [row["page_id"]]
 
-
-    response = requests.put(firebase_url + "/marvel.json", json=rows)
+    del temp_rows[""]
+    # print(temp_rows)
+    response = requests.put(firebase_url + "/marvel_invert_index/"+col.lower()+".json", json=temp_rows)
     print(response.status_code)
 
     print("total data saved to firebase")
